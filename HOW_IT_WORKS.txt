@@ -1,0 +1,59 @@
+How this project works — architecture & algorithm notes
+
+Overview
+- This project is a small Book Recommendation System built in Python with a minimal Flask UI. It demonstrates three recommendation approaches and a hybrid:
+  1) Association Rules (FP-Growth) — for market-basket style recommendations (Unit V in syllabus)
+  2) Item-based Collaborative Filtering — personalized recommendations using user-item ratings (Units III/IV)
+  3) Content-based (TF-IDF) — similarity on book descriptions (Unit VI)
+
+Files and structure
+- data/
+  - books.csv: catalog with columns (book_id,title,author,description,genres)
+  - ratings.csv: user ratings (user_id,book_id,rating)
+  - transactions.csv: transaction history with an "items" column listing book titles per transaction
+- src/
+  - utils.py: readers for CSV files
+  - assoc_rules.py: builds transactions, runs FP-Growth (via mlxtend), mines rules with support/confidence/lift, helper to return top rules
+  - collab.py: builds user-item matrix (pivot), computes item-item cosine similarity, recommends using weighted neighbor scores and returns explanations showing top contributing items
+  - content.py: TF-IDF on descriptions and cosine similarity (linear_kernel) for content-based recommendations
+  - hybrid.py: orchestrates the methods and provides `recommend_with_explanations` which returns JSON-friendly dicts with metadata and explanation fields
+  - webapp.py: Flask app exposing endpoints:
+      GET / -> UI
+      POST /api/recommend -> returns recommendations with explanations
+      GET /api/top_rules -> returns top association rules
+      GET /api/eval -> runs quick eval (precision@k)
+      GET /api/clusters -> returns simple user cluster counts
+  - eval.py: quick evaluation helper (precision@k on a random train/test split)
+  - visualize.py: clusters users (KMeans) and returns counts/labels for visualization
+- start_demo.ps1: helper to start the server and open the browser
+- DEMO.md: step-by-step demo script and talking points
+
+Data shapes and how they are used
+- Transactions: `transactions.csv` rows -> 'items' string -> split into list of titles. TransactionEncoder converts to one-hot table for FP-Growth.
+- User-item matrix: ratings pivot (users x books). Missing values are filled with zeros for computing cosine similarity.
+- TF-IDF matrix: vectorizer on `books.csv` descriptions; similarities are computed with cosine.
+
+Algorithm details (concise)
+- FP-Growth (mlxtend.frequent_patterns.fpgrowth): mines frequent itemsets without generating candidate sets across iterations (contrast with Apriori). After frequent itemsets are found, `association_rules` produces rules with confidence and lift. Use support threshold to control frequency, and confidence threshold to filter rules.
+- Item-based CF: compute item-item cosine similarity (similarity of columns from user-item matrix). Score unknown items for a user by weighted sum of similarities times the user's known ratings.
+- TF-IDF content-based: compute TF-IDF vectors for book descriptions and use cosine similarity between vectors to find similar books.
+
+Explanations and metadata
+- All recommendation outputs aim to include: title, author, genres, method, score, and an explanation field:
+  - assoc: `rule` string and support/confidence/lift
+  - collab: `contrib` list of (title, weight) showing top rated similar items by the user
+  - content: `similar_to` (book id) and similarity score
+
+User ID vs Book ID
+- Book ID: numeric identifier for each book in `books.csv`. Use Book ID in the UI when you want content or market-basket (assoc/content) recommendations based on a selected book.
+- User ID: numeric identifier representing a user (row in `ratings.csv`). Use User ID when requesting collaborative (personalized) recommendations.
+
+Extending and evaluation
+- Replace the random train/test split with time-aware splitting for realistic evaluation.
+- Add more metrics: recall@k, MAP, NDCG. Use cross-validation for robust estimates.
+- Use larger datasets (Book-Crossing, Goodreads samples) and adapt `transactions.csv` to use book IDs rather than free-form titles to avoid mismatches.
+
+Security & deployment
+- The Flask app uses the development server (debug=True). For deployment use a WSGI server (gunicorn/uvicorn) behind a reverse proxy.
+
+If you want a short slide deck or printable one-pager summarizing methods and their mapping to the syllabus, I can generate that next.

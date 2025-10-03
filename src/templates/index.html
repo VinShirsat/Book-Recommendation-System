@@ -1,0 +1,274 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Book Recommender</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body class="bg-light">
+    <div class="container py-4">
+      <h1 class="mb-4">Book Recommendation System</h1>
+
+      <div class="card mb-4">
+        <div class="card-body">
+          <form id="rec-form" class="row g-3">
+            <div class="col-md-3">
+              <label class="form-label">Method</label>
+              <select class="form-select" id="method">
+                <option value="hybrid">Hybrid</option>
+                <option value="assoc">Association Rules</option>
+                <option value="collab">Collaborative</option>
+                <option value="content">Content-based</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">User ID</label>
+              <input class="form-control" type="number" id="user_id" />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Book</label>
+              <select class="form-select" id="book_select">
+                <option value="">(none)</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Top N</label>
+              <input class="form-control" type="number" id="top_n" value="5" />
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+              <button id="submit" class="btn btn-primary w-100">Get Recommendations</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-7">
+          <div id="results" class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Recommendations</h5>
+              <ul id="rec-list" class="list-group list-group-flush"></ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div id="explain" class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Explanation</h5>
+              <div id="explain-body">Select a method and hit "Get Recommendations" to see explanations.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Add a Book</h5>
+          <form id="add-book" class="row g-2">
+            <div class="col-md-4"><input class="form-control" id="new-title" placeholder="Title"/></div>
+            <div class="col-md-3"><input class="form-control" id="new-author" placeholder="Author"/></div>
+            <div class="col-md-3"><input class="form-control" id="new-genres" placeholder="genres (pipe-separated)"/></div>
+            <div class="col-md-2"><button class="btn btn-outline-secondary" id="btn-add">Add Book</button></div>
+          </form>
+          <div id="add-result" class="small text-success mt-2"></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Top Rules</h5>
+              <button id="btn-rules" class="btn btn-outline-primary btn-sm mb-2">Load Top Rules</button>
+              <ul id="rules-list" class="list-group"></ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Evaluation</h5>
+              <button id="btn-eval" class="btn btn-outline-success btn-sm mb-2">Run Quick Eval</button>
+              <div id="eval-body" class="small text-muted">Precision@5: -</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">User Clusters</h5>
+              <button id="btn-clusters" class="btn btn-outline-info btn-sm mb-2">Load Clusters</button>
+              <svg id="cluster-chart" width="100%" height="120"></svg>
+              <div id="cluster-legend" class="small mt-2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+    async function getRecs(evt){
+      evt.preventDefault();
+      document.getElementById('rec-list').innerHTML = '';
+      document.getElementById('explain-body').innerText = 'Loading...';
+      const payload = {
+        method: document.getElementById('method').value,
+        user_id: document.getElementById('user_id').value || null,
+        book_id: document.getElementById('book_id').value || null,
+        top_n: document.getElementById('top_n').value || 5
+      };
+      const resp = await fetch('/api/recommend', {method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload)});
+      const data = await resp.json();
+      const recs = data.recs || [];
+      if(recs.length === 0){
+        document.getElementById('explain-body').innerText = 'No recommendations found for the given inputs.';
+        return;
+      }
+      // populate list
+      const list = document.getElementById('rec-list');
+      recs.forEach((r, idx) => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item d-flex justify-content-between align-items-start';
+        const title = r.title || (r.book_id ? ('Book ' + r.book_id) : JSON.stringify(r));
+        const meta = (r.author ? r.author : '') + (r.genres ? (' • ' + r.genres) : '');
+        const badge = document.createElement('span');
+        badge.className = 'badge bg-secondary rounded-pill';
+        badge.innerText = (r.score || r.confidence || r.value || '').toFixed ? (r.score || r.confidence || 0).toFixed(2) : '';
+        li.innerHTML = `<div><strong>${title}</strong><div class="small text-muted">${meta} • method: ${r.method}</div></div>`;
+        li.appendChild(badge);
+        li.onclick = ()=> showExplain(r);
+        list.appendChild(li);
+      });
+      // show explanation for first
+      showExplain(recs[0]);
+    }
+
+    // Top rules
+    async function loadRules(){
+      const resp = await fetch('/api/top_rules');
+      const data = await resp.json();
+      const rules = data.rules || [];
+      const ul = document.getElementById('rules-list');
+      ul.innerHTML = '';
+      rules.forEach(r=>{
+        const li = document.createElement('li');
+        li.className = 'list-group-item small';
+        li.innerText = `${r.antecedents.join(', ')} => ${r.consequents.join(', ')} (lift=${r.lift.toFixed(2)})`;
+        ul.appendChild(li);
+      });
+    }
+
+    async function runEval(){
+      const resp = await fetch('/api/eval');
+      const data = await resp.json();
+      document.getElementById('eval-body').innerText = 'Precision@5: ' + (data.precision_at_k ? data.precision_at_k.toFixed(3) : 'N/A');
+    }
+
+    async function loadClusters(){
+      const resp = await fetch('/api/clusters');
+      const data = await resp.json();
+      const counts = data.counts || {};
+      const entries = Object.entries(counts).map(([k,v])=>({k: +k, v})).sort((a,b)=>a.k-b.k);
+      const svg = document.getElementById('cluster-chart');
+      svg.innerHTML = '';
+      const width = svg.clientWidth || 300;
+      const barW = Math.max(20, Math.floor(width / entries.length) - 8);
+      entries.forEach((e, i)=>{
+        const x = i * (barW + 8) + 10;
+        const h = Math.max(10, e.v * 10);
+        const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+        rect.setAttribute('x', x);
+        rect.setAttribute('y', 110 - h);
+        rect.setAttribute('width', barW);
+        rect.setAttribute('height', h);
+        rect.setAttribute('fill', '#0d6efd');
+        svg.appendChild(rect);
+        const text = document.createElementNS('http://www.w3.org/2000/svg','text');
+        text.setAttribute('x', x + barW/2);
+        text.setAttribute('y', 115);
+        text.setAttribute('font-size', '10');
+        text.setAttribute('text-anchor', 'middle');
+        text.textContent = e.k;
+        svg.appendChild(text);
+      });
+      document.getElementById('cluster-legend').innerText = 'Clusters: ' + entries.map(e=>`${e.k} (${e.v})`).join(', ');
+    }
+
+    document.getElementById('btn-rules').addEventListener('click', loadRules);
+    document.getElementById('btn-eval').addEventListener('click', runEval);
+    document.getElementById('btn-clusters').addEventListener('click', loadClusters);
+
+    // Books management
+    async function loadBooks(){
+      const resp = await fetch('/api/books');
+      const data = await resp.json();
+      const books = data.books || [];
+      const sel = document.getElementById('book_select');
+      sel.innerHTML = '<option value="">(none)</option>';
+      books.forEach(b=>{
+        const opt = document.createElement('option');
+        opt.value = b.book_id;
+        opt.innerText = `${b.book_id} — ${b.title}`;
+        sel.appendChild(opt);
+      });
+    }
+
+    document.getElementById('book_select').addEventListener('change', ()=>{
+      // keep legacy field book_id for compatibility
+      const v = document.getElementById('book_select').value;
+      document.getElementById('book_id').value = v;
+    });
+
+    document.getElementById('add-book').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const title = document.getElementById('new-title').value;
+      const author = document.getElementById('new-author').value;
+      const genres = document.getElementById('new-genres').value;
+      const resp = await fetch('/api/add_book', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({title, author, genres})});
+      const data = await resp.json();
+      if(resp.ok){
+        document.getElementById('add-result').innerText = `Added: ${data.book.book_id} — ${data.book.title}`;
+        loadBooks();
+      } else {
+        document.getElementById('add-result').innerText = `Error: ${data.error}`;
+      }
+    });
+
+    // initialize books list on load
+    loadBooks();
+
+    function showExplain(r){
+      if(!r) return;
+      let html = '<p><strong>Method:</strong> ' + (r.method || '') + '</p>';
+      if(r.method === 'assoc'){
+        html += `<p><strong>Rule:</strong> ${r.rule}</p>`;
+        html += `<p><strong>Support:</strong> ${r.support.toFixed(3)} <strong>Confidence:</strong> ${r.confidence.toFixed(3)} <strong>Lift:</strong> ${r.score.toFixed(3)}</p>`;
+        if(r.author || r.genres){
+          html += `<p class="small text-muted">${r.author || ''}${r.author && r.genres ? ' • ' : ''}${r.genres || ''}</p>`;
+        }
+      } else if(r.method === 'collab'){
+        html += `<p><strong>Score:</strong> ${r.score.toFixed(3)}</p>`;
+        if(r.author || r.genres){
+          html += `<p class="small text-muted">${r.author || ''}${r.author && r.genres ? ' • ' : ''}${r.genres || ''}</p>`;
+        }
+        if(r.contrib && r.contrib.length){
+          html += '<p><strong>Top contributing items:</strong><ul>' + r.contrib.map(c=>`<li>${c[0]} (${c[1].toFixed(3)})</li>`).join('') + '</ul></p>';
+        }
+      } else if(r.method === 'content'){
+        html += `<p><strong>Similarity:</strong> ${r.score.toFixed(3)}</p>`;
+        html += `<p><strong>Similar to:</strong> ${r.similar_to} ${r.title ? '('+r.title+')' : ''}</p>`;
+        if(r.author || r.genres){
+          html += `<p class="small text-muted">${r.author || ''}${r.author && r.genres ? ' • ' : ''}${r.genres || ''}</p>`;
+        }
+      } else {
+        html += `<pre>${JSON.stringify(r, null, 2)}</pre>`;
+      }
+      document.getElementById('explain-body').innerHTML = html;
+    }
+
+    document.getElementById('rec-form').addEventListener('submit', getRecs);
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

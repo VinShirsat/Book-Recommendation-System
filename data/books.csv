@@ -1,0 +1,11 @@
+book_id,title,author,description,genres
+1,Introduction to Data Science,Joel Grus,A gentle introduction to data science using Python,data science|python
+2,Hands-On Machine Learning,Aurélien Géron,Practical machine learning with Scikit-Learn and TensorFlow,machine learning|tensorflow
+3,Deep Learning,Goodfellow Deep,Comprehensive deep learning textbook,deep learning|neural networks
+4,Practical Statistics for Data Scientists,Peter Bruce,Statistics cookbook for data science,statistics|data science
+5,Pattern Recognition and ML,Christopher Bishop,Pattern recognition and machine learning,classical ML|probability
+6,Recommender Systems Handbook,Francesco Ricci,Comprehensive guide to recommender systems,recommendation|systems
+7,Python for Data Analysis,Wes McKinney,Data analysis with pandas and Python,pandas|python
+8,Data Visualization with Python,Alberto Cairo,Principles of data visualization,data viz|visualization
+9,Introduction to Algorithms,CLRS,Classic algorithms textbook,algorithms|theory
+10,Marketing Analytics,Practical Marketing,Analytical approaches to marketing,marketing|analytics
