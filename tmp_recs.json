@@ -1,0 +1,118 @@
+﻿{
+  "recs": [
+    {
+      "confidence": 0.5,
+      "method": "assoc",
+      "rule": "{Introduction to Data Science} => {Python for Data Analysis}",
+      "score": 2.5,
+      "support": 0.2,
+      "title": "Python for Data Analysis"
+    },
+    {
+      "author": "Alberto Cairo",
+      "book_id": 8,
+      "contrib": [
+        [
+          "Introduction to Data Science",
+          3.1234752377721215
+        ]
+      ],
+      "genres": "data viz|visualization",
+      "method": "collab",
+      "score": 1.922499378113293,
+      "title": "Data Visualization with Python"
+    },
+    {
+      "author": "Peter Bruce",
+      "book_id": 4,
+      "contrib": [
+        [
+          "Hands-On Machine Learning",
+          2.6490647141300876
+        ]
+      ],
+      "genres": "statistics|data science",
+      "method": "collab",
+      "score": 1.5936465124570265,
+      "title": "Practical Statistics for Data Scientists"
+    },
+    {
+      "author": "Francesco Ricci",
+      "book_id": 6,
+      "contrib": [
+        [
+          "Hands-On Machine Learning",
+          2.11925177130407
+        ]
+      ],
+      "genres": "recommendation|systems",
+      "method": "collab",
+      "score": 1.3853012339771242,
+      "title": "Recommender Systems Handbook"
+    },
+    {
+      "author": "Goodfellow Deep",
+      "book_id": 3,
+      "contrib": [],
+      "genres": "deep learning|neural networks",
+      "method": "collab",
+      "score": 0.0,
+      "title": "Deep Learning"
+    },
+    {
+      "author": "Christopher Bishop",
+      "book_id": 5,
+      "contrib": [],
+      "genres": "classical ML|probability",
+      "method": "collab",
+      "score": 0.0,
+      "title": "Pattern Recognition and ML"
+    },
+    {
+      "author": "Wes McKinney",
+      "book_id": 7,
+      "genres": "pandas|python",
+      "method": "content",
+      "score": 0.2989441989929793,
+      "similar_to": 1,
+      "title": "Python for Data Analysis"
+    },
+    {
+      "author": "Peter Bruce",
+      "book_id": 4,
+      "genres": "statistics|data science",
+      "method": "content",
+      "score": 0.2989441989929793,
+      "similar_to": 1,
+      "title": "Practical Statistics for Data Scientists"
+    },
+    {
+      "author": "Alberto Cairo",
+      "book_id": 8,
+      "genres": "data viz|visualization",
+      "method": "content",
+      "score": 0.1300506537561854,
+      "similar_to": 1,
+      "title": "Data Visualization with Python"
+    },
+    {
+      "author": "CLRS",
+      "book_id": 9,
+      "genres": "algorithms|theory",
+      "method": "content",
+      "score": 0.0,
+      "similar_to": 1,
+      "title": "Introduction to Algorithms"
+    },
+    {
+      "author": "Practical Marketing",
+      "book_id": 10,
+      "genres": "marketing|analytics",
+      "method": "content",
+      "score": 0.0,
+      "similar_to": 1,
+      "title": "Marketing Analytics"
+    }
+  ]
+}
+

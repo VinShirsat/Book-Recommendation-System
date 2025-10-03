@@ -7,7 +7,7 @@ OUT = 'presentation.pdf'
 slides = [
     {"title": "Book Recommendation System — Overview", "bullets": [
         "Three recommenders: Association Rules (FP-Growth), Item-based Collaborative, Content-based (TF-IDF)",
-        "Hybrid endpoint combines outputs and provides explanations", 
+        "Hybrid endpoint combines outputs and provides explanations",
         "Flask UI with AJAX, visualization panels: top rules, clusters, evaluation"
     ]},
     {"title": "Data & Inputs", "bullets": [

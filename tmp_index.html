@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html>
   <head>
     <meta charset="utf-8" />
@@ -30,11 +30,29 @@
               <label class="form-label">Book</label>
               <select class="form-select" id="book_select">
                 <option value="">(none)</option>
-                {% if books %}
-                  {% for b in books %}
-                    <option value="{{ b.book_id }}">{{ b.book_id }} — {{ b.title }}</option>
-                  {% endfor %}
-                {% endif %}
+                
+                  
+                    <option value="1">1 — Introduction to Data Science</option>
+                  
+                    <option value="2">2 — Hands-On Machine Learning</option>
+                  
+                    <option value="3">3 — Deep Learning</option>
+                  
+                    <option value="4">4 — Practical Statistics for Data Scientists</option>
+                  
+                    <option value="5">5 — Pattern Recognition and ML</option>
+                  
+                    <option value="6">6 — Recommender Systems Handbook</option>
+                  
+                    <option value="7">7 — Python for Data Analysis</option>
+                  
+                    <option value="8">8 — Data Visualization with Python</option>
+                  
+                    <option value="9">9 — Introduction to Algorithms</option>
+                  
+                    <option value="10">10 — Marketing Analytics</option>
+                  
+                
               </select>
               <input type="hidden" id="book_id" />
             </div>
@@ -42,19 +60,15 @@
               <label class="form-label">Top N</label>
               <input class="form-control" type="number" id="top_n" value="5" />
             </div>
-            <div class="col-12 col-md-2 d-flex align-items-end">
-              <button id="submit" type="submit" class="btn btn-primary w-100" aria-label="Get Recommendations">Get Recommendations</button>
+            <div class="col-md-2 d-flex align-items-end">
+              <button id="submit" type="submit" class="btn btn-primary w-100">Get Recommendations</button>
             </div>
           </form>
       <div class="row">
         <div class="col-md-7">
           <div id="results" class="card mb-4">
             <div class="card-body">
-              <div class="d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">Recommendations</h5>
-                <!-- fallback button for small screens -->
-                <button id="submit2" class="btn btn-sm btn-primary">Get Recommendations</button>
-              </div>
+              <h5 class="card-title">Recommendations</h5>
               <ul id="rec-list" class="list-group list-group-flush"></ul>
             </div>
           </div>
@@ -115,7 +129,7 @@
     </div>
 
     <script>
-    const books = {{ books | tojson | safe }};
+    const books = [{"author": "Joel Grus", "book_id": 1, "description": "A gentle introduction to data science using Python", "genres": "data science|python", "title": "Introduction to Data Science"}, {"author": "Aur\u00e9lien G\u00e9ron", "book_id": 2, "description": "Practical machine learning with Scikit-Learn and TensorFlow", "genres": "machine learning|tensorflow", "title": "Hands-On Machine Learning"}, {"author": "Goodfellow Deep", "book_id": 3, "description": "Comprehensive deep learning textbook", "genres": "deep learning|neural networks", "title": "Deep Learning"}, {"author": "Peter Bruce", "book_id": 4, "description": "Statistics cookbook for data science", "genres": "statistics|data science", "title": "Practical Statistics for Data Scientists"}, {"author": "Christopher Bishop", "book_id": 5, "description": "Pattern recognition and machine learning", "genres": "classical ML|probability", "title": "Pattern Recognition and ML"}, {"author": "Francesco Ricci", "book_id": 6, "description": "Comprehensive guide to recommender systems", "genres": "recommendation|systems", "title": "Recommender Systems Handbook"}, {"author": "Wes McKinney", "book_id": 7, "description": "Data analysis with pandas and Python", "genres": "pandas|python", "title": "Python for Data Analysis"}, {"author": "Alberto Cairo", "book_id": 8, "description": "Principles of data visualization", "genres": "data viz|visualization", "title": "Data Visualization with Python"}, {"author": "CLRS", "book_id": 9, "description": "Classic algorithms textbook", "genres": "algorithms|theory", "title": "Introduction to Algorithms"}, {"author": "Practical Marketing", "book_id": 10, "description": "Analytical approaches to marketing", "genres": "marketing|analytics", "title": "Marketing Analytics"}];
     const titleMap = {};
     books.forEach(b=> { titleMap[b.book_id] = b.title; });
     // if no selection, pick the first book by default so dropdown doesn't show only (none)
@@ -222,21 +236,6 @@
     document.getElementById('btn-rules').addEventListener('click', loadRules);
     document.getElementById('btn-eval').addEventListener('click', runEval);
     document.getElementById('btn-clusters').addEventListener('click', loadClusters);
-
-    // fallback button in Results card should trigger the same submit action
-    const submit2 = document.getElementById('submit2');
-    if(submit2){
-      submit2.addEventListener('click', (e)=>{
-        const form = document.getElementById('rec-form');
-        if(!form) return;
-        if(typeof form.requestSubmit === 'function'){
-          form.requestSubmit();
-        } else {
-          // older browsers
-          form.dispatchEvent(new Event('submit', {cancelable: true}));
-        }
-      });
-    }
 
     // Books management
     async function loadBooks(){

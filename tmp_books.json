@@ -1,0 +1,82 @@
+﻿{
+  "books": [
+    {
+      "author": "Joel Grus",
+      "book_id": 1,
+      "description": "A gentle introduction to data science using Python",
+      "genres": "data science|python",
+      "title": "Introduction to Data Science"
+    },
+    {
+      "author": "Aur\u00e9lien G\u00e9ron",
+      "book_id": 2,
+      "description": "Practical machine learning with Scikit-Learn and TensorFlow",
+      "genres": "machine learning|tensorflow",
+      "title": "Hands-On Machine Learning"
+    },
+    {
+      "author": "Goodfellow Deep",
+      "book_id": 3,
+      "description": "Comprehensive deep learning textbook",
+      "genres": "deep learning|neural networks",
+      "title": "Deep Learning"
+    },
+    {
+      "author": "Peter Bruce",
+      "book_id": 4,
+      "description": "Statistics cookbook for data science",
+      "genres": "statistics|data science",
+      "title": "Practical Statistics for Data Scientists"
+    },
+    {
+      "author": "Christopher Bishop",
+      "book_id": 5,
+      "description": "Pattern recognition and machine learning",
+      "genres": "classical ML|probability",
+      "title": "Pattern Recognition and ML"
+    },
+    {
+      "author": "Francesco Ricci",
+      "book_id": 6,
+      "description": "Comprehensive guide to recommender systems",
+      "genres": "recommendation|systems",
+      "title": "Recommender Systems Handbook"
+    },
+    {
+      "author": "Wes McKinney",
+      "book_id": 7,
+      "description": "Data analysis with pandas and Python",
+      "genres": "pandas|python",
+      "title": "Python for Data Analysis"
+    },
+    {
+      "author": "Alberto Cairo",
+      "book_id": 8,
+      "description": "Principles of data visualization",
+      "genres": "data viz|visualization",
+      "title": "Data Visualization with Python"
+    },
+    {
+      "author": "CLRS",
+      "book_id": 9,
+      "description": "Classic algorithms textbook",
+      "genres": "algorithms|theory",
+      "title": "Introduction to Algorithms"
+    },
+    {
+      "author": "Practical Marketing",
+      "book_id": 10,
+      "description": "Analytical approaches to marketing",
+      "genres": "marketing|analytics",
+      "title": "Marketing Analytics"
+    },
+    {
+      "author": "adfa",
+      "book_id": 11,
+      "description": "",
+      "genres": "asdf",
+      "title": "asdf"
+    }
+  ]
+}
+
