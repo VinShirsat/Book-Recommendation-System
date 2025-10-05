@@ -18,7 +18,8 @@ def build_itemsets(transactions_df):
     return tx.tolist()
 
 
-def mine_fpgrowth(transactions_df, min_support=0.2, min_threshold=0.6):
+def mine_fpgrowth(transactions_df, min_support=0.07, min_threshold=0.5):
+    # Lowered min_support to 0.07 (about 2 transactions in 30) and min_threshold to 0.5 for more rules
     tx = build_itemsets(transactions_df)
     te = TransactionEncoder()
     te_ary = te.fit(tx).transform(tx)

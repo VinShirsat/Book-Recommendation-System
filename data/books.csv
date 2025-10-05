@@ -10,3 +10,8 @@ book_id,title,author,description,genres
 9,Introduction to Algorithms,CLRS,Classic algorithms textbook,algorithms|theory
 10,Marketing Analytics,Practical Marketing,Analytical approaches to marketing,marketing|analytics
 11,asdf,adfa,,asdf
+12,The Art of Computer Programming,Donald Knuth,Classic multi-volume work on algorithms and programming,algorithms|theory
+13,Machine Learning Yearning,Andrew Ng,Practical advice for structuring machine learning projects,machine learning|practical
+14,Deep Reinforcement Learning,Richard Sutton,Comprehensive guide to reinforcement learning,reinforcement learning|AI
+15,Data Science for Business,Foster Provost,Data science concepts for business decision making,business|data science
+16,Python Cookbook,David Beazley,Recipes for Python programming,python|programming

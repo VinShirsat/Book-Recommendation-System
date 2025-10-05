@@ -35,7 +35,7 @@ def api_top_rules():
     tx = load_books()  # placeholder to avoid circular imports; we'll load transactions inside
     from src.utils import load_transactions
     tx = load_transactions()
-    _, rules = mine_fpgrowth(tx, min_support=0.1, min_threshold=0.5)
+    _, rules = mine_fpgrowth(tx, min_support=0.07, min_threshold=0.5)
     rules_out = top_k_rules(rules, k=10)
     return jsonify({'rules': rules_out})
 

@@ -13,7 +13,7 @@ def recommend(user_id=None, book_id=None, method='hybrid', top_n=5):
     if method in ('assoc', 'hybrid') and book_id is not None:
         # find title for book_id
         title = books.loc[books['book_id'] == book_id, 'title'].iloc[0]
-        _, rules = mine_fpgrowth(tx, min_support=0.2, min_threshold=0.5)
+        _, rules = mine_fpgrowth(tx, min_support=0.07, min_threshold=0.5)
         assoc = recommend_from_rules(rules, [title], top_n=top_n)
         results.extend([(r[0], 'assoc', r[1], r[2]) for r in assoc])
     if method in ('collab', 'hybrid') and user_id is not None:
@@ -36,7 +36,7 @@ def recommend_with_explanations(user_id=None, book_id=None, method='hybrid', top
     out = []
     if method in ('assoc', 'hybrid') and book_id is not None:
         title = books.loc[books['book_id'] == book_id, 'title'].iloc[0]
-        _, rules = mine_fpgrowth(tx, min_support=0.2, min_threshold=0.5)
+        _, rules = mine_fpgrowth(tx, min_support=0.07, min_threshold=0.5)
         from src.assoc_rules import recommend_with_explanations as ar_explain
         out.extend(ar_explain(rules, [title], top_n=top_n))
     if method in ('collab', 'hybrid') and user_id is not None:
